@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Slider with Fields</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: left;
+      /* padding: 20px; */
+      white-space: pre-line;
+    }
+    .slider-container {
+      margin-bottom: 20px;
+    }
+    .field-container {
+      /* display: flex; */
+      /* flex-wrap: wrap; */
+      /* gap: 10px; */
+      padding: 2px;
+      white-space: normal;
+      text-align: left;
+    }
+    /* .field {
+      width: 50px;
+      padding: 10px;
+      background-color: #f0f0f0;
+      text-align: center;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    } */
+  </style>
+</head>
+<body>
+
+  <h1>Slider with Multiple Fields</h1>
+  
+  <div class="slider-container">
+    <label for="slider">Value: </label>
+    <input type="range" id="slider" min="0" max="120" value="20" oninput="updateFields(this.value)">
+    Value <input type="number" id="numberInput" step="0.1"  min="0" max="1000000000" value="50" oninput="updateFields(this.value)">
+    Base_Value <input id="Base_Value"  oninput="updateBase()">
+  
+    Base <input type="number" id="Base" step="1"  min="0" max="100" value="10" oninput="updateBase()">
+  
+  </div>
+
+  <div class="field-container">
+    <!-- <div class="field" id="field1">50</div> -->
+    <div class="field" id="field2">50</div>
+    <div class="field" id="field3">50</div>
+    <div class="field" id="field4">50</div>
+    <div class="field" id="field5">50</div>
+    <div class="field" id="field6">50</div>
+    <div class="field" id="field7">50</div>
+    <div class="field" id="field8">50</div>
+    <div class="field" id="field9">50</div>
+    <div class="field" id="field10">50</div>
+    <div class="field" id="field11">50</div>
+    <div class="field" id="field12">50</div>
+    <div class="field" id="field13">50</div>
+    <div class="field" id="field14">50</div>
+    <div class="field" id="field15">50</div>
+    <div class="field" id="field16">50</div>
+  </div>
+
+  <script>
+
+function char(x){
+    l = ['0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F','G']
+    return l[x]
+}
+function base(base, x){
+    let s = '';
+    //let x = X+0;
+    let X = x + 0;
+    while (x>=1)
+    {
+        let dig = (Math.floor(x%base)).toString();
+        let c = char(dig);
+        s = c + s ;
+        x/=base;
+    }
+    x = X - Math.floor(X);
+    //console.log(x)
+    s += '.';
+    let prec = 5;
+    for(let i = 0; i <prec; i++)
+    {
+        x*=base;
+        s = s+(Math.floor(x%base)).toString();
+    }
+    return removezeros(s) ;
+}
+
+function removezeros(s){
+    for (let i = s.length-1; i >= 0; i --)
+    {
+        if (!((s[i] == '0') || (s[i] == '.')))
+        {
+            return s.slice(0,i+1);
+        }
+    }
+    return 'ERROR'
+}
+
+
+    function updateFields(value) {
+        document.getElementById('slider').value = value;
+        document.getElementById('numberInput').value = value;
+        //document.getElementById(`field${1}`).textContent = value;
+      for (let i = 2; i <= 16; i++) {
+        let s = base(i,value)
+        let spaces = '';
+        for (let a = 0; a < 2 -i.toString().length; a++){
+            spaces = '0'+spaces;
+        }
+        document.getElementById(`field${i}`).textContent = spaces +i.toString() +'_______ '+ s;
+      }
+    }
+    function parse(c){
+        let D = {'0':0,'1':1,'2':2,'3':3,'4':4,'5':5,'6':6,'7':7,'8':8,'9':9,'A':10,'B':11,'C':12,'D':13,'E':14,'F':15,'G':16,'.':NaN}
+        return D[c]
+    }
+
+    function updateBase(){
+        let b = document.getElementById('Base').value;
+        let v = document.getElementById('Base_Value').value;
+
+        let total = 0;
+        let curr = 1/b;
+        let decimal = 0;
+        let decimal_found = false;
+        for (let i = 0; i < v.length; i ++){
+            let x = parse(v[i])
+            console.log(v[i],x)
+            if (v[i] == '.')
+            {
+                decimal = i
+                decimal_found = true
+                console.log('found nan')
+            }
+            else
+            {
+                total += curr * x
+                if (decimal_found)
+                {
+                    curr /=b
+                }
+                else
+                {
+                    total *= b
+                }//curr /= b
+            }
+        }
+        
+        console.log('total')
+        console.log(total)
+        document.getElementById('slider').value = total;
+        document.getElementById('numberInput').value = total;
+        updateFields(total)
+    }
+    updateFields(50);
+  </script>
+
+</body>
+</html>
